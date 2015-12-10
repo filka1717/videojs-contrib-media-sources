@@ -345,7 +345,7 @@ deprecateOldCue = function(cue) {
         return;
       }
 
-      i = track.cues.length
+      i = track.cues.length;
       while(i--) {
         cue = track.cues[i];
 

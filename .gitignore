@@ -4,7 +4,6 @@ npm-debug.log
 *.orig
 *.log
 tmp
-dist
 
 # ignore emacs scratch files
 *~
