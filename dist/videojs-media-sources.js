@@ -1,4 +1,4 @@
-/*! videojs-contrib-media-sources - v2.0.1 - 2015-12-10
+/*! videojs-contrib-media-sources - v2.0.1 - 2015-12-17
 * Copyright (c) 2015 Brightcove; Licensed  */
 /**
  * mux.js
@@ -1259,7 +1259,9 @@ window.muxjs.AacStream = function() {
           // If we get here we have 00 00 00 or 00 00 01
           if (data[offset + 2] === 1) {
             if (offset > start) {
-              this._h264Frame.writeBytes(data, start, offset - start);
+              // XXX pavelp: check if this fix masks another bug
+              if (this._h264Frame)
+                this._h264Frame.writeBytes(data, start, offset - start);
             }
             this._state = 3;
             offset += 3;
@@ -1270,7 +1272,9 @@ window.muxjs.AacStream = function() {
               data[offset + 2] === 0 &&
               data[offset + 3] === 1) {
             if (offset > start) {
-              this._h264Frame.writeBytes(data, start, offset - start);
+              // XXX pavelp: check if this fix masks another bug
+              if (this._h264Frame)
+                this._h264Frame.writeBytes(data, start, offset - start);
             }
             this._state = 3;
             offset += 4;
