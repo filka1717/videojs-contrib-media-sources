@@ -92,6 +92,7 @@ var messageHandlers = {
    */
   resetTransmuxer: function (data) {
     // delete the transmuxer
+    transmuxer.dispose();
     this.defaultInit();
   },
   /**
