@@ -1,4 +1,4 @@
-/*! videojs-contrib-media-sources - v2.0.1 - 2016-04-13
+/*! videojs-contrib-media-sources - v2.0.1 - 2016-04-25
 * Copyright (c) 2016 Brightcove; Licensed  */
 /**
  * mux.js
