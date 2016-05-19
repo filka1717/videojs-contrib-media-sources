@@ -1,7 +1,11 @@
 {
   "name": "videojs-contrib-media-sources",
-  "version": "3.1.0-1",
+  "version": "3.1.0-2",
   "description": "A Media Source Extensions plugin for video.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hola/videojs-contrib-media-sources.git"
+  },
   "main": "es5/videojs-contrib-media-sources.js",
   "scripts": {
     "prebuild": "npm run clean",
@@ -74,7 +78,7 @@
     "test/"
   ],
   "dependencies": {
-    "mux.js": "hola/mux.js#hola_5.10.2",
+    "mux.js": "hola/mux.js#v2.2.0-2",
     "video.js": "^5.10.1",
     "webworkify": "1.0.2"
   },
