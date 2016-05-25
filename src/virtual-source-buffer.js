@@ -326,6 +326,27 @@ export default class VirtualSourceBuffer extends videojs.EventTarget {
     this.transmuxer_.postMessage({action: 'flush'});
   }
 
+  pushBuffer(segment) {
+    this.transmuxer_.postMessage({
+      action: 'push',
+      // Send the typed-array of data as an ArrayBuffer so that
+      // it can be sent as a "Transferable" and avoid the costly
+      // memory copy
+      data: segment.buffer,
+
+      // To recreate the original typed-array, we need information
+      // about what portion of the ArrayBuffer it was a view into
+      byteOffset: segment.byteOffset,
+      byteLength: segment.byteLength
+    },
+    [segment.buffer]);
+  }
+
+  flushBuffer() {
+    this.bufferUpdating_ = true;
+    this.transmuxer_.postMessage({action: 'flush'});
+  }
+
   /**
    * Emulate the native mediasource function and remove parts
    * of the buffer from any of our internal buffers that exist
