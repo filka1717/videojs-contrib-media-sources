@@ -239,6 +239,11 @@ export default class HtmlMediaSource extends videojs.EventTarget {
       if (parsedType.parameters && parsedType.parameters.codecs) {
         codecs = parsedType.parameters.codecs.split(',');
         codecs = translateLegacyCodecs(codecs);
+        // XXX alexeym: fix bug in firefox when audio codec begins from
+        // whitespace character
+        codecs = codecs.map((codec) => {
+          return codec.trim();
+        });
         codecs = codecs.filter((codec) => {
           return (isAudioCodec(codec) || isVideoCodec(codec));
         });
