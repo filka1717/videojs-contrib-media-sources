@@ -1,6 +1,6 @@
 {
-  "name": "videojs-contrib-media-sources",
-  "version": "3.1.0-5",
+  "name": "@hola.org/videojs-contrib-media-sources",
+  "version": "3.1.0-6",
   "description": "A Media Source Extensions plugin for video.js",
   "repository": {
     "type": "git",
@@ -21,9 +21,14 @@
     "docs:api": "jsdoc src -r -d docs/api",
     "docs:toc": "doctoc README.md",
     "lint": "vjsstandard",
+    "login": "c=`npm c ls`; test \"${c#*@hola}\" != \"$c\" || npm login --scope @hola.org",
     "prestart": "npm-run-all docs build",
     "start": "npm-run-all -p start:* watch:*",
     "start:serve": "babel-node scripts/server.js",
+    "release": "run-s login release:*",
+    "release:tag": "git tag v$npm_package_version",
+    "release:publish": "npm publish",
+    "release:pushtags": "git push --tags origin",
     "pretest": "npm-run-all lint build",
     "test": "karma start test/karma/detected.js",
     "test:chrome": "npm run pretest && karma start test/karma/chrome.js",
@@ -78,7 +83,7 @@
     "test/"
   ],
   "dependencies": {
-    "mux.js": "hola/mux.js#v2.2.0-3",
+    "@hola.org/mux.js": ">=2.2.1-2 <2.2.1",
     "video.js": "^5.10.1",
     "webworkify": "1.0.2"
   },
@@ -105,7 +110,7 @@
     "lodash-compat": "^3.10.0",
     "minimist": "^1.2.0",
     "nodemon": "^1.9.1",
-    "npm-run-all": "^1.2.0",
+    "npm-run-all": "^3.1.0",
     "portscanner": "^1.0.0",
     "qunitjs": "^1.0.0",
     "serve-static": "^1.10.0",
