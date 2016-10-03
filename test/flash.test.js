@@ -3,7 +3,7 @@ import document from 'global/document';
 import QUnit from 'qunit';
 import sinon from 'sinon';
 import videojs from 'video.js';
-import muxjs from 'mux.js';
+import muxjs from '@hola.org/mux.js';
 import FlashMediaSource from '../src/flash-media-source';
 import FlashSourceBuffer from '../src/flash-source-buffer';
 import FlashConstants from '../src/flash-constants';
