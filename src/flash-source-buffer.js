@@ -2,7 +2,7 @@
  * @file flash-source-buffer.js
  */
 import videojs from 'video.js';
-import muxjs from '@hola.org/mux.js';
+import muxjs from 'mux.js';
 import removeCuesFromTrack from './remove-cues-from-track';
 import createTextTracksIfNecessary from './create-text-tracks-if-necessary';
 import addTextTrackData from './add-text-track-data';

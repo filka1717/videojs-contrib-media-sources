@@ -12,7 +12,7 @@
  * transmuxer running inside of a WebWorker by exposing a simple
  * message-based interface to a Transmuxer object.
  */
-import muxjs from '@hola.org/mux.js';
+import muxjs from 'mux.js';
 
 /**
  * Re-emits tranmsuxer events by converting them into messages to the

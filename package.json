@@ -1,6 +1,6 @@
 {
   "name": "@hola.org/videojs-contrib-media-sources",
-  "version": "3.1.0-7",
+  "version": "3.1.0-8",
   "description": "A Media Source Extensions plugin for video.js",
   "repository": {
     "type": "git",
@@ -59,7 +59,7 @@
   "browserify-shim": {
     "qunit": "global:QUnit",
     "sinon": "global:sinon",
-    "video.js": "global:videojs"
+    "@hola.org/video.js": "global:videojs"
   },
   "vjsstandard": {
     "ignore": [
@@ -84,11 +84,12 @@
   ],
   "dependencies": {
     "@hola.org/mux.js": ">=2.2.1-2 <2.2.1",
-    "video.js": "^5.10.1",
+    "@hola.org/video.js": ">=5.10.2-16 <5.10.2",
     "webworkify": "1.0.2"
   },
   "devDependencies": {
     "babel": "^5.8.0",
+    "babel5-plugin-module-alias": "^1.0.0",
     "babelify": "^6.0.0",
     "bannerize": "^1.0.0",
     "browserify": "^11.0.0",
@@ -119,5 +120,16 @@
     "uglify-js": "^2.5.0",
     "videojs-standard": "^4.0.0",
     "watchify": "^3.6.0"
+  },
+  "babel": {
+    "plugins": [
+      "babel5-plugin-module-alias"
+    ],
+    "extra": {
+      "module-alias": [
+        {"src": "npm:@hola.org/mux.js", "expose": "mux.js"},
+        {"src": "npm:@hola.org/video.js", "expose": "video.js"}
+      ]
+    }
   }
 }
