@@ -7,8 +7,8 @@ var DEFAULTS = {
   files: [
     'node_modules/sinon/pkg/sinon.js',
     'node_modules/sinon/pkg/sinon-ie.js',
-    'node_modules/video.js/dist/video.js',
-    'node_modules/video.js/dist/video-js.css',
+    'node_modules/@hola.org/video.js/dist/video.js',
+    'node_modules/@hola.org/video.js/dist/video-js.css',
     'test/**/*.js'
   ],
 
@@ -38,6 +38,13 @@ var DEFAULTS = {
       'babelify',
       'browserify-shim'
     ]
+  },
+
+  customLaunchers: {
+    travisChrome: {
+      base: 'Chrome',
+      flags: ['--no-sandbox']
+    }
   }
 };
 
