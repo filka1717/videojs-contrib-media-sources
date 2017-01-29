@@ -248,25 +248,23 @@ export default class FlashSourceBuffer extends videojs.EventTarget {
     }
 
     // concatenate appends up to the max append size
-    let chunk = this.buffer_[0].subarray(0, chunkSize);
-
-    // requeue any bytes that won't make it this round
-    if (chunk.byteLength < chunkSize ||
-        this.buffer_[0].byteLength === chunkSize) {
-      this.buffer_.shift();
-    } else {
-      this.buffer_[0] = this.buffer_[0].subarray(chunkSize);
-    }
-
-    this.bufferSize_ -= chunk.byteLength;
-
+    let length = 0;
     // base64 encode the bytes
     let binary = '';
-    let length = chunk.byteLength;
+    let i;
 
-    for (let i = 0; i < length; i++) {
-      binary += String.fromCharCode(chunk[i]);
+    while (length < chunkSize && this.buffer_.length) {
+      for (i = 0; i < this.buffer_[0].length && length < chunkSize; i++) {
+        binary += String.fromCharCode(this.buffer_[0][i]);
+        length++;
+      }
+      if (i === this.buffer_[0].length) {
+        this.buffer_.shift();
+      } else {
+        this.buffer_[0] = this.buffer_[0].subarray(i);
+      }
     }
+    this.bufferSize_ -= length;
     let b64str = window.btoa(binary);
 
     // bypass normal ExternalInterface calls and pass xml directly
