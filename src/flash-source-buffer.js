@@ -22,6 +22,17 @@ const scheduleTick = function(func) {
 };
 
 /**
+ * Generates a random string of max length 6
+ *
+ * @return {String} the randomly generated string
+ * @function generateRandomString
+ * @private
+ */
+const generateRandomString = function() {
+  return (Math.random().toString(36)).slice(2, 8);
+};
+
+/**
  * Round a number to a specified number of places much like
  * toFixed but return a number instead of a string representation.
  *
@@ -87,7 +98,22 @@ export default class FlashSourceBuffer extends videojs.EventTarget {
         )
       )
     );
-    this.mediaSource.swfObj.vjs_appendBuffer(encodedHeader);
+
+    const safePlayerId = this.mediaSource.player_.id().replace(/[^a-zA-Z0-9]/g, '_');
+
+    this.flashEncodedHeaderName_ = 'vjs_flashEncodedHeader_' +
+                                   safePlayerId +
+                                   generateRandomString();
+    this.flashEncodedDataName_ = 'vjs_flashEncodedData_' +
+                                   safePlayerId +
+                                   generateRandomString();
+
+    window[this.flashEncodedHeaderName_] = () => {
+      delete window[this.flashEncodedHeaderName_];
+      return encodedHeader;
+    };
+
+    this.mediaSource.swfObj.vjs_appendChunkReady(this.flashEncodedHeaderName_);
 
     Object.defineProperty(this, 'timestampOffset', {
       get() {
@@ -267,22 +293,16 @@ export default class FlashSourceBuffer extends videojs.EventTarget {
     this.bufferSize_ -= length;
     let b64str = window.btoa(binary);
 
-    // bypass normal ExternalInterface calls and pass xml directly
-    // IE can be slow by default
-    this.mediaSource.swfObj.CallFunction(
-      '<invoke name="vjs_appendBuffer"' +
-      'returntype="javascript"><arguments><string>' +
-      b64str +
-      '</string></arguments></invoke>');
-
-    // schedule another append if necessary
-    if (this.bufferSize_ !== 0) {
+    window[this.flashEncodedDataName_] = () => {
+      // schedule another processBuffer to process any left over data or to
+      // trigger updateend
       scheduleTick(this.processBuffer_.bind(this));
-    } else {
-      this.updating = false;
-      this.trigger({ type: 'updateend' });
+      delete window[this.flashEncodedDataName_];
+      return b64str;
+    };
 
-    }
+    // Notify the swf that segment data is ready to be appended
+    this.mediaSource.swfObj.vjs_appendChunkReady(this.flashEncodedDataName_);
   }
 
   /**

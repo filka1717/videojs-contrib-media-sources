@@ -16,7 +16,7 @@ import {MediaSource, URL} from '../src/videojs-contrib-media-sources.js';
 // return the sequence of calls to append to the SWF
 const appendCalls = function(calls) {
   return calls.filter(function(call) {
-    return call.callee && call.callee === 'vjs_appendBuffer';
+    return call.callee && call.callee === 'vjs_appendChunkReady';
   });
 };
 
@@ -184,9 +184,20 @@ QUnit.module('Flash MediaSource', {
     swfObj.vjs_discontinuity = (attr, value) => {
       this.swfCalls.push({ attr, value });
     };
-    swfObj.vjs_appendBuffer = (flvHeader) => {
-      // only the FLV header directly invokes this so we can
-      // ignore it
+    swfObj.vjs_appendChunkReady = (method) => {
+      window.setTimeout(() => {
+        let chunk = window[method]();
+
+        // only care about the segment data, not the flv header
+        if (method.substr(0, 21) === 'vjs_flashEncodedData_') {
+          let call = {
+            callee: 'vjs_appendChunkReady',
+            arguments: [window.atob(chunk).split('').map((c) => c.charCodeAt(0))]
+          };
+
+          this.swfCalls.push(call);
+        }
+      }, 1);
     };
     /* eslint-enable camelcase */
     this.mediaSource.trigger({
@@ -242,7 +253,7 @@ QUnit.test('passes bytes to Flash', function() {
 
   QUnit.ok(this.swfCalls.length, 'the SWF was called');
   this.swfCalls = appendCalls(this.swfCalls);
-  QUnit.strictEqual(this.swfCalls[0].callee, 'vjs_appendBuffer', 'called appendBuffer');
+  QUnit.strictEqual(this.swfCalls[0].callee, 'vjs_appendChunkReady', 'called appendChunkReady');
   QUnit.deepEqual(this.swfCalls[0].arguments[0],
             [0, 1],
             'passed the base64 encoded data');
@@ -261,7 +272,7 @@ QUnit.test('passes chunked bytes to Flash', function() {
   QUnit.ok(this.swfCalls.length, 'the SWF was called');
   this.swfCalls = appendCalls(this.swfCalls);
   QUnit.equal(this.swfCalls.length, 3, 'the SWF received 3 chunks');
-  QUnit.strictEqual(this.swfCalls[0].callee, 'vjs_appendBuffer', 'called appendBuffer');
+  QUnit.strictEqual(this.swfCalls[0].callee, 'vjs_appendChunkReady', 'called appendChunkReady');
   QUnit.deepEqual(this.swfCalls[0].arguments[0],
             [0, 1],
             'passed the base64 encoded data');
