@@ -51,6 +51,19 @@ const toDecimalPlaces = function(num, places) {
   return Math.round(num * scale) / scale;
 };
 
+const byteArrayToString = function(buffer) {
+  let CHUNK_SIZE = 8 * 1024;
+  let str = '';
+
+  if (buffer.length <= CHUNK_SIZE) {
+    return String.fromCharCode.apply(null, buffer);
+  }
+  for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
+    str += String.fromCharCode.apply(null, buffer.subarray(i, i + CHUNK_SIZE));
+  }
+  return str;
+};
+
 /**
  * A SourceBuffer implementation for Flash rather than HTML.
  *
@@ -274,24 +287,24 @@ export default class FlashSourceBuffer extends videojs.EventTarget {
     }
 
     // concatenate appends up to the max append size
-    let length = 0;
-    // base64 encode the bytes
-    let binary = '';
-    let i;
+    let payload = new Uint8Array(Math.min(chunkSize, this.bufferSize_));
+    let i = payload.byteLength;
 
-    while (length < chunkSize && this.buffer_.length) {
-      for (i = 0; i < this.buffer_[0].length && length < chunkSize; i++) {
-        binary += String.fromCharCode(this.buffer_[0][i]);
-        length++;
-      }
-      if (i === this.buffer_[0].length) {
-        this.buffer_.shift();
-      } else {
+    while (i) {
+      let chunk = this.buffer_[0].subarray(0, i);
+
+      payload.set(chunk, payload.byteLength - i);
+     // requeue any bytes that won't make it this round
+      if (chunk.byteLength < this.buffer_[0].byteLength) {
         this.buffer_[0] = this.buffer_[0].subarray(i);
+      } else {
+        this.buffer_.shift();
       }
+      i -= chunk.byteLength;
     }
-    this.bufferSize_ -= length;
-    let b64str = window.btoa(binary);
+    this.bufferSize_ -= payload.byteLength;
+
+    let b64str = window.btoa(byteArrayToString(payload));
 
     window[this.flashEncodedDataName_] = () => {
       // schedule another processBuffer to process any left over data or to
