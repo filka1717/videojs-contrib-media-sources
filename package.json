@@ -83,7 +83,7 @@
     "test/"
   ],
   "dependencies": {
-    "@hola.org/mux.js": "2.2.1-5",
+    "@hola.org/mux.js": "2.2.1-10",
     "@hola.org/video.js": "5.10.2-25",
     "webworkify": "1.0.2"
   },
